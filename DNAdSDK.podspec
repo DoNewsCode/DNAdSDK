@@ -10,20 +10,18 @@ Pod::Spec.new do |spec|
   spec.name         = "DNAdSDK"
   spec.version      = "5.1"
   spec.summary      = "多牛聚合广告SDK"
-  spec.description  = <<-DESC
-                   DESC
+  spec.description  = "多牛聚合广告SDK"
 
   spec.homepage     = "http://ad.infinities.com.cn/advertiser/"
   spec.author       = { "Donews" => "kinsunlu@sina.com" }
   
-  spec.platform     = :ios
-  spec.platform     = :ios, "9.0"
+  spec.ios.deployment_target = "9.0"
 
-  spec.source       = { :git => "git@github.com:DoNewsCode/DNAdSDK.git", :tag => "5.1" }
+  spec.source       = { :git => "https://github.com/DoNewsCode/DNAdSDK.git", :tag => "5.1" }
 
   # spec.resources    = "Resources/*.bundle"
   spec.frameworks   = "AVFoundation", "AdSupport", "CoreMotion", "CoreMedia", "CoreLocation", "CoreGraphics", "CoreTelephony", "CoreServices", "MediaPlayer", "MessageUI", "StoreKit", "SystemConfiguration", "SafariServices", "Security", "WebKit", "Photos"
-  spec.libraries    = "libc++", "libsqlite3.0", "libz", "libxml2", "libresolv.9"
+  spec.libraries    = "c++", "sqlite3.0", "z", "xml2", "resolv.9"
   
   spec.requires_arc = true
 
