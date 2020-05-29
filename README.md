@@ -7,10 +7,11 @@
 
 ### 集成SDK
 #### 方式一：手动集成framework
-> **下载**[多牛聚合广告SDK](download/other_sdk)**将ZIP解压，将内容拖放到项目中。**
+> **下载**[多牛聚合广告SDK](download/iOS_sdk)**将ZIP解压，将内容拖放到项目中。**
 
 #### 方式二：pod集成framework
 > **支持pod方式接入，只需配置pod环境，在podfile文件中加入以下代码即可接入成功。 pod 'DNAdSDK'**
+**POD 特别注意⚠️！！因为百度AdSDK已经停止在pod更新，所以请手动下载并引入其SDK，下载地址：[百度广告SDK](download/other_sdk)**
 
 ##   步骤2：全局配置(必要)
 
@@ -32,7 +33,7 @@
 
 ### 运行环境配置
 * 支持系统 iOS 9.0 及以上
-* SDK编译环境 Xcode 10.0
+* SDK编译环境 Xcode 11.4.1
 * 支持架构： x86-64, armv7, armv7s, arm64
 
 ### 添加依赖库（pod 接入方式可以略过此步）
@@ -673,3 +674,44 @@ _rewardedVideo = rewardedVideo; //需要全局持有实例否则实例被销毁�
 - (void)rewardVideoAd:(DNRewardedVideoAd *)rewardedVideoAd willDispenseAdOfType:(DNAdProvider)type;
 ```
 
+
+## 扩展：各个供应商提供的个性回调
+> **在之前的开发过程中您可能已经介入过【广点通】【穿山甲】【百度】的AdSDK，因为聚合SDK统一了它们的共性，因此有些厂商的非共性代理回调就没有办法在聚合广告的代理中体现，没关系，有了`DNAdDelegateCallbackProtocol`就能完美解决这个问题**
+
+> **只要遵守了`DNAdDelegateCallbackProtocol`这个协议（现全部广告都支持此协议），就可以在开发过程中使用“adDelegateCallback”**
+
+### DNAdDelegateCallback
+> ** DNAdDelegateCallback的参数详解**
+
+```
+为兼容各种代理回调方式，所以DNAdDelegateCallback有两个参数一个返回值。
+第一个是该回调的广告类型，是为了区分相同名字的不同供应商代理会被覆盖的问题。
+第二个是参数，这个参数并不是供应商广告回调的AD类，而是其之后的参数，比如视频回调的时候的类型，详见下面的表，基本数据类型会包装成NSNumber，结构体会包装成NSValue。
+
+返回值亦是一样，如果该代理方法有要返回值，请直接returen值，如果是基本数据类型，也是包装成NSNumber再返回，结构体装成NSValue再返回，没有返回值的return nil。
+
+typedef id _Nullable (^DNAdDelegateCallback)(DNAdProvider, id _Nullable);
+```
+
+> **详细用法**
+
+```
+/// 设定一个回调，必须是DNAdDelegateCallback类型的block
+DNAdDelegateCallback splashAdCountdownToZero = ^id (DNAdProvider adType, id obj){
+    NSLog(@"回调啦  splashAdCountdownToZero:");
+    return nil;
+};
+    
+DNSplashAd.hiddenStatusBar = isHiddenStatusBar;
+DNSplashAd *splash = [DNSplashAd.alloc initWithPlaceId:placeID];
+
+/// 然后以其方法名的方式（注意带冒号）作为KEY将CALLBACK block作为VALUE放进去，注意！一定要  copy   一下，否则可能会崩溃。
+splash.callbackPool = @{@"splashAdCountdownToZero:": [splashAdCountdownToZero copy]};
+
+splash.delegate = self;
+_splash = splash; //需要全局持有实例否则实例被销毁将无法正常展示广告
+CGRect frame = bottomView.frame;
+frame.size = (CGSize){UIScreen.mainScreen.bounds.size.width, 100.0};
+bottomView.frame = frame;
+[splash loadAdAndShowWithController:controller bottomView:bottomView];
+```
