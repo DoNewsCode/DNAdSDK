@@ -26,10 +26,12 @@ Pod::Spec.new do |spec|
   spec.requires_arc = true
 
   spec.vendored_frameworks  = '*.framework'
-  # spec.vendored_libraries = 'Framewroks/*.a'
+  # spec.public_header_files = 'BaiduMobAd/Headers/*.h'
+  # spec.vendored_libraries = 'BaiduMobAd/*.a'
   spec.resource_bundles = {
-        'DNAdSDK' => ['DNAdSDK.bundle']
-    }
+    'DNAdSDK' => ['DNAdSDK.bundle']
+  }
+  # spec.xcconfig = { 'HEADER_SEARCH_PATHS' => '$(SDKROOT)/usr/include/libxml2'}
   spec.dependency "Bytedance-UnionAD", "~> 2.9.5.6"
   spec.dependency "GDTMobSDK", "~> 4.11.8"
 
