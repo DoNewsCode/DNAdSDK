@@ -9,6 +9,8 @@
 #ifndef ZKAdMacros_h
 #define ZKAdMacros_h
 
+#import <Foundation/Foundation.h>
+
 /// 广告展示样式类型
 typedef NS_ENUM(NSInteger, ZKAdInformationStyle) {
     ZKAdInformationStyleUnknow  = 0,    /// 未知类型

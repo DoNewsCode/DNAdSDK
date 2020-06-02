@@ -1,0 +1,6 @@
+framework module ZhiKeAdSDK {
+  umbrella header "ZhiKeAdSDK.h"
+
+  export *
+  module * { export * }
+}

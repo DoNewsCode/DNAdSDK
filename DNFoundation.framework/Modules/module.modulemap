@@ -1,0 +1,6 @@
+framework module DNFoundation {
+  umbrella header "DNFoundation.h"
+
+  export *
+  module * { export * }
+}
