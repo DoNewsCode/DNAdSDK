@@ -17,7 +17,7 @@ Pod::Spec.new do |spec|
   
   spec.ios.deployment_target = "9.0"
 
-  spec.source       = { :git => "https://github.com/DoNewsCode/DNAdSDK.git", :tag => "5.1" }
+  spec.source       = { :git => "https://github.com/DoNewsCode/DNAdSDK.git", :tag => "v5.1" }
 
   # spec.resources    = "Resources/*.bundle"
   spec.frameworks   = "AVFoundation", "AdSupport", "CoreMotion", "CoreMedia", "CoreLocation", "CoreGraphics", "CoreTelephony", "CoreServices", "MediaPlayer", "MessageUI", "StoreKit", "SystemConfiguration", "SafariServices", "Security", "WebKit", "Photos"
