@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DNAdMacros.h"
+#import "DNAdDelegateCallbackProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -59,13 +59,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)splashAdExposured:(DNSplashAd *)splashAd;
 
 /**
- 开屏广告即将分配供应商
- @param splashAd splashAd 对象
- @param type 即将加载的广告提供商类型
- */
-- (void)splashAd:(DNSplashAd *)splashAd willDispenseAdOfType:(DNAdProvider)type;
-
-/**
  直客开屏视频广告准备播放回调！！！！！！！仅仅用于直客视频类型开屏，其他无效！！！！！
  @param splashAd splashAd 对象
  @param isLoadInCache 视频资源是不是从缓存加载的，YES从缓存加载，NO当前直接加载全部后播放
@@ -75,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /// 聚合开屏广告类。 提示: Splash广告只支持竖屏
-@interface DNSplashAd : NSObject
+@interface DNSplashAd : NSObject <DNAdDelegateCallbackProtocol>
 
 /// 代理对象
 @property (nonatomic, weak) id<DNSplashAdDelegate> delegate;

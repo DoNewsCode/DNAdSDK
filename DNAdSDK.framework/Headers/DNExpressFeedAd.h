@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "DNExpressFeedAdView.h"
-#import "DNAdMacros.h"
+#import "DNAdDelegateCallbackProtocol.h"
 #import "DNAdSlot.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -75,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface DNExpressFeedAd : NSObject
+@interface DNExpressFeedAd : NSObject <DNAdDelegateCallbackProtocol>
 
 /// 信息流数据结果状态的 代理对象
 @property (nonatomic, weak) id<DNExpressFeedAdDelegate> delegate;

@@ -675,7 +675,7 @@ _rewardedVideo = rewardedVideo; //需要全局持有实例否则实例被销毁�
 ```
 
 
-## 扩展：各个供应商提供的个性回调
+## 扩展：各个供应商提供的个性回调(Beta)
 > **在之前的开发过程中您可能已经介入过【广点通】【穿山甲】【百度】的AdSDK，因为聚合SDK统一了它们的共性，因此有些厂商的非共性代理回调就没有办法在聚合广告的代理中体现，没关系，有了`DNAdDelegateCallbackProtocol`就能完美解决这个问题**
 
 > **只要遵守了`DNAdDelegateCallbackProtocol`这个协议（现全部广告都支持此协议），就可以在开发过程中使用“adDelegateCallback”**
@@ -715,3 +715,61 @@ frame.size = (CGSize){UIScreen.mainScreen.bounds.size.width, 100.0};
 bottomView.frame = frame;
 [splash loadAdAndShowWithController:controller bottomView:bottomView];
 ```
+
+
+### 现支持参数对照表
+
+> **Splash开屏**
+
+Key | 供应商 | 参数解释| 备注
+:-: | :-: | :-: | :-:
+splashAdWillPresentFullScreenModal: | 广点通 | - | 开屏广告点击以后即将弹出全屏广告页
+splashAdDidPresentFullScreenModal: | 广点通 | - | 开屏广告点击以后弹出全屏广告页
+splashAdWillDismissFullScreenModal: | 广点通 | - | 点击以后全屏广告页将要关闭
+splashAdLifeTime: | 广点通 | NSNumber包裹的NSUInteger | 开屏广告剩余时间回调
+splashAdCountdownToZero: | 穿山甲 | - | 当开屏广告倒计时等于零时调用此方法
+
+> **Interstitial插屏**
+
+Key | 供应商 | 参数解释| 备注
+:-: | :-: | :-: | :-:
+unifiedInterstitialDidPresentScreen: | 广点通 | - | 插屏2.0广告展示成功回调该函数
+unifiedInterstitialWillLeaveApplication: | 广点通 | - | 当点击下载应用时会调用系统程序打开其它App或者Appstore时回调
+unifiedInterstitialAdWillPresentFullScreenModal: | 广点通 | - | 点击插屏2.0广告以后即将弹出全屏广告页
+unifiedInterstitialAdDidPresentFullScreenModal: | 广点通 | - | 点击插屏2.0广告以后弹出全屏广告页
+unifiedInterstitialAdDidDismissFullScreenModal: | 广点通 | - | 全屏广告页被关闭
+unifiedInterstitialAd:playerStatusChanged: | 广点通 | NSNumber包裹的GDTMediaPlayerStatus | 插屏2.0视频广告 player 播放状态更新回调
+unifiedInterstitialAdViewWillPresentVideoVC | 广点通 | - | 插屏2.0视频广告详情页 WillPresent 回调
+unifiedInterstitialAdViewDidPresentVideoVC: | 广点通 | - | 插屏2.0视频广告详情页 DidPresent 回调
+unifiedInterstitialAdViewWillDismissVideoVC: | 广点通 | - | 插屏2.0视频广告详情页 WillDismiss 回调
+unifiedInterstitialAdViewDidDismissVideoVC: | 广点通 | - | 插屏2.0视频广告详情页 DidDismiss 回调
+nativeExpresInterstitialAdWillClose: | 穿山甲 | - | 当InterstitialAd即将关闭时调用此方法。
+
+> **Rewarded插屏**
+
+Key | 供应商 | 参数解释| 备注
+:-: | :-: | :-: | :-:
+nativeExpressRewardedVideoAdDidDownLoadVideo: | 穿山甲 | - | 成功缓存时调用此方法。
+nativeExpressRewardedVideoAdWillClose: | 穿山甲 | - | 此方法在视频广告即将关闭时调用。
+nativeExpressRewardedVideoAdDidClickSkip: | 穿山甲 | - | 当用户单击跳过按钮时调用此方法。
+nativeExpressRewardedVideoAdServerRewardDidFail: | 穿山甲 | - | 异步请求的服务器验证失败。 返回值不是2000。
+nativeExpressRewardedVideoAdDidCloseOtherController:interactionType: | 穿山甲 | NSNumber包裹的BUInteractionType | 当另一个控制器关闭时调用此方法。
+
+> **ExpressFeed模版信息流**
+
+Key | 供应商 | 参数解释| 备注
+:-: | :-: | :-: | :-:
+nativeExpressAdViewDidPresentScreen: | 广点通 | DNExpressFeedAdView对象 | 点击原生模板广告以后弹出全屏广告页
+nativeExpressAdViewWillDissmissScreen: | 广点通 | 同上 | 全屏广告页将要关闭
+nativeExpressAdViewApplicationWillEnterBackground: | 广点通 | 同上 | 详解:当点击应用下载或者广告调用系统程序打开时调用
+nativeExpressAdViewWillPresentVideoVC: | 广点通 | 同上 | 原生视频模板详情页 WillPresent 回调
+nativeExpressAdViewDidPresentVideoVC: | 广点通 | 同上 | 原生视频模板详情页 DidPresent 回调
+nativeExpressAdViewWillDismissVideoVC: | 广点通 | 同上 | 原生视频模板详情页 WillDismiss 回调
+nativeExpressAdViewDidDismissVideoVC: | 广点通 | 同上 | 原生视频模板详情页 DidDismiss 回调
+
+> **Feed自渲染信息流**
+
+Key | 供应商 | 参数解释| 备注
+:-: | :-: | :-: | :-:
+gdt_unifiedNativeAdViewApplicationWillEnterBackground: | 广点通 | DNFeedAdContentView对象 | 当点击应用下载或者广告调用系统程序打开时调用
+

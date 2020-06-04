@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DNAdMacros.h"
+#import "DNAdDelegateCallbackProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -48,16 +48,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param bannerView bannerView对象本身
 - (void)bannerAdDidClickCloseForBannerView:(DNBannerAdView *)bannerView;
 
-/**
- banner广告即将分配供应商
- @param bannerView bannerView对象本身
- @param type 即将加载的广告提供商类型
- */
-- (void)bannerView:(DNBannerAdView *)bannerView willDispenseAdOfType:(DNAdProvider)type;
-
 @end
 
-@interface DNBannerAdView : UIView
+@interface DNBannerAdView : UIView <DNAdDelegateCallbackProtocol>
 
 /// 代理对象
 @property (nonatomic, weak) id<DNBannerAdViewDelegate> delegate;

@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "DNAdMaterial.h"
+#import "DNAdDelegateCallbackProtocol.h"
 #import "DNAdSlot.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -37,15 +38,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// 广告详情页关闭回调
 - (void)feedAd:(DNFeedAd *)feedAd contentViewAdDetailViewClosed:(DNFeedAdContentView *)view;
 
-/// 当点击应用下载或者广告调用系统程序打开时调用
-//- (void)feedAdContentViewApplicationWillEnterBackground:(DNFeedAdContentView *)view;
-
 /// 广告详情页面即将展示回调
 - (void)feedAd:(DNFeedAd *)feedAd contentViewWillPresentScreen:(DNFeedAdContentView *)view;
 
 @end
 
-@interface DNFeedAd : NSObject
+@interface DNFeedAd : NSObject <DNAdDelegateCallbackProtocol>
 
 /**
 *  信息流数据结果状态的 代理对象

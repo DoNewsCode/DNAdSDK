@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DNAdMacros.h"
+#import "DNAdDelegateCallbackProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -44,14 +44,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param interstitialAd interstitialAd对象本身
 - (void)interstitialAdDetailsDidClosedForInterstitialAd:(DNInterstitialAd *)interstitialAd;
 
-/// 插屏广告即将分配供应商
-/// @param interstitialAd interstitialAd对象本身
-/// @param type 即将加载的广告提供商类型
-- (void)interstitialAd:(DNInterstitialAd *)interstitialAd willDispenseAdOfType:(DNAdProvider)type;
-
 @end
 
-@interface DNInterstitialAd : NSObject
+@interface DNInterstitialAd : NSObject <DNAdDelegateCallbackProtocol>
 
 /// 代理对象
 @property (nonatomic, weak) id <DNInterstitialAdDelegate> delegate;

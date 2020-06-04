@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DNAdMacros.h"
+#import "DNAdDelegateCallbackProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -52,16 +52,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param rewardedVideoAd rewardedVideoAd对象本身
 - (void)rewardVideoAdDidPlayFinish:(DNRewardedVideoAd *)rewardedVideoAd;
 
-/**
- 激励视频广告即将分配供应商
- @param rewardedVideoAd rewardedVideoAd对象本身
- @param type 即将加载的广告提供商类型
- */
-- (void)rewardVideoAd:(DNRewardedVideoAd *)rewardedVideoAd willDispenseAdOfType:(DNAdProvider)type;
-
 @end
 
-@interface DNRewardedVideoAd : NSObject
+@interface DNRewardedVideoAd : NSObject <DNAdDelegateCallbackProtocol>
 
 /// 代理对象
 @property (nonatomic, weak) id <DNRewardedVideoAdDelegate> delegate;
