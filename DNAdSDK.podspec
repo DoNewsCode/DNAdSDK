@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |spec|
   spec.name         = "DNAdSDK"
-  spec.version      = "5.1"
+  spec.version      = "5.2"
   spec.summary      = "多牛聚合广告SDK"
   spec.description  = "多牛聚合广告SDK"
 
@@ -17,7 +17,7 @@ Pod::Spec.new do |spec|
   
   spec.ios.deployment_target = "9.0"
 
-  spec.source       = { :git => "https://github.com/DoNewsCode/DNAdSDK.git", :tag => "v5.1" }
+  spec.source       = { :git => "https://github.com/DoNewsCode/DNAdSDK.git", :tag => "v5.2" }
 
   # spec.resources    = "Resources/*.bundle"
   spec.frameworks   = "AVFoundation", "AdSupport", "CoreMotion", "CoreMedia", "CoreLocation", "CoreGraphics", "CoreTelephony", "CoreServices", "MediaPlayer", "MessageUI", "StoreKit", "SystemConfiguration", "SafariServices", "Security", "WebKit", "Photos"
@@ -33,7 +33,7 @@ Pod::Spec.new do |spec|
   }
   # spec.xcconfig = { 'HEADER_SEARCH_PATHS' => '$(SDKROOT)/usr/include/libxml2'}
   spec.dependency "Bytedance-UnionAD", "~> 2.9.5.6"
-  spec.dependency "GDTMobSDK", "~> 4.11.8"
+  spec.dependency "GDTMobSDK"
 
 
 end
