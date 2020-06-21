@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 网络请求超时时间，默认为3
 @property (nonatomic) NSTimeInterval timeoutInterval;
 
+@property (nonatomic, assign, getter=isShowDebugLog) BOOL showDebugLog;
+
 + (instancetype)sharedManager;
 
 - (void)startService;

@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly, nullable) NSArray<NSString *> *icon_url;
 /// 联盟平台的logo（⚠️⚠️用于自渲染）
 @property (nonatomic, strong, readonly, nullable) UIImage *adlogoImage;
-/// 广告媒体来源  0直客 1百度 2google 3今⽇日头条 4英威诺 5⼴点通
+/// 广告媒体来源  0直客 1百度  3穿山甲 5⼴点通
 @property (nonatomic, assign, readonly) DNAdProvider ad_from;
 /// 广告资源类型(附录 4)
 @property (nonatomic, assign, readonly) DNAdCreativeType creative_type;

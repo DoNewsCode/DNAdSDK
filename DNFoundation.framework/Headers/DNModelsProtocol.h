@@ -21,7 +21,7 @@
 @protocol _DNDeModelsProtocol <NSObject>
 
 @required
-@property (nonatomic, readonly) NSDictionary *dictionaryValue;
+@property (nonatomic, readonly) NSDictionary *toDictionaryValue;
 
 @end
 
