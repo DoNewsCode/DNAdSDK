@@ -14,6 +14,8 @@
 #import <DNAdSDK/DNErrorDefines.h>
 #import <DNAdSDK/DNExpressFeedAd.h>
 #import <DNAdSDK/DNExpressFeedAdView.h>
+#import <DNAdSDK/DNExpressDrawAd.h>
+#import <DNAdSDK/DNExpressDrawAdView.h>
 #import <DNAdSDK/DNFeedAd.h>
 #import <DNAdSDK/DNFeedAdContentView.h>
 #import <DNAdSDK/DNInterstitialAd.h>
