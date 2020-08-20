@@ -14,15 +14,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZKSplashAd : NSObject
 
+@property (nonatomic, copy, readonly) NSString *positionid;
+
+/// 代理对象
 @property (nonatomic, weak) id<ZKSplashAdDelegate> delegate;
 
-@property (nonatomic, strong) NSDictionary *adMaterial;
-
+/// 打开落地页的控制器，请务必测试可以正常弹出
 @property (nonatomic, weak) UIViewController *controller;
 
-@property (nonatomic, strong, readonly) UIView *adView;
+/// 广告视图，请自行处理，默认没有设置frame
+@property (nonatomic, readonly) UIView *adView;
 
-- (void)loadAD;
+/// 指定构造器
+/// @param positionid 广告位ID
+- (instancetype)initWithPositionid:(NSString *)positionid;
+
+/// 加载并展示开屏广告
+/// @param size 加载广告的素材大小（一定要是展示广告的大小，否则图像质量/清晰度将降低）
+- (void)loadADWithSize:(CGSize)size;
 
 @end
 
@@ -89,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 获得所有开屏视频缓存的资源组
 + (NSArray <ZKAdVideoFileModel *> *)allVideoAdCatalog;
 
-/// 清除旧的开屏视频缓存
+/// 清除旧的开屏视频缓存（剩余最新10个缓存项目，总缓存数据不足十个将不删除任何缓存）
 + (void)clearVideoCache;
 
 /// 清除全部开屏视频缓存

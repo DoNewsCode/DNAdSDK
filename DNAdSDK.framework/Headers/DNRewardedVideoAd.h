@@ -60,6 +60,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) id <DNRewardedVideoAdDelegate> delegate;
 
 @property (nonatomic, copy, readonly) NSString *placeId;
+/// 默认=NO。
+/// 此方法如果设置为YES则将会在-rewardedVideoShowInController:调用时自动查找传入控制器的栈顶控制器，以避免广告无法正常弹出的问题。
+@property (nonatomic, assign, getter=isAdShowCompatibilityMode) BOOL adShowCompatibilityMode;
 
 /// 构造方法
 /// @param placeId placeId - 广告位 ID

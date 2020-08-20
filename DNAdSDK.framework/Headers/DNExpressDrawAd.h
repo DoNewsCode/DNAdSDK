@@ -81,6 +81,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) id <DNExpressDrawAdDelegate> delegate;
 /// [必选]开发者需传入用来弹出目标页的ViewController，一般为当前ViewController
 @property (nonatomic, weak) UIViewController *controller;
+/// 默认=NO。
+/// 此方法如果设置为YES则将会在聚合SDK最后一个可控Controller时自动查找传入控制器的栈顶控制器，以避免广告无法正常弹出的问题。
+@property (nonatomic, assign, getter=isAdShowCompatibilityMode) BOOL adShowCompatibilityMode;
 
 /// 指定构造器
 /// @param placeId 广告位id

@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "DNExpressFeedAdView.h"
 #import "DNAdDelegateCallbackProtocol.h"
-#import "DNAdSlot.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -77,18 +76,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DNExpressFeedAd : NSObject <DNAdDelegateCallbackProtocol>
 
+@property (nonatomic, copy, readonly) NSString *placeId;
+@property (nonatomic, assign, readonly) CGSize adSize;
 /// 信息流数据结果状态的 代理对象
 @property (nonatomic, weak) id<DNExpressFeedAdDelegate> delegate;
-
 /// [必选]开发者需传入用来弹出目标页的ViewController，一般为当前ViewController
 @property (nonatomic, weak) UIViewController *controller;
+/// 默认=NO。
+/// 此方法如果设置为YES则将会在聚合SDK最后一个可控Controller时自动查找传入控制器的栈顶控制器，以避免广告无法正常弹出的问题。
+@property (nonatomic, assign, getter=isAdShowCompatibilityMode) BOOL adShowCompatibilityMode;
 
-/// 广告位
-@property (nonatomic, readonly, strong) DNAdSlot *slot;
+/// 指定构造器
+/// @param placeId 广告位id
+/// @param adSize 广告尺寸
+- (instancetype)initWithPlaceId:(NSString *)placeId adSize:(CGSize)adSize;
 
-
-/// 请求广告
-- (void)loadAdWithSlot:(DNAdSlot *)slot;
+/// 请求信息流广告
+/// @param count 请求广告的数量
+- (void)loadAdWithCount:(NSInteger)count;
 
 @end
 

@@ -54,21 +54,23 @@ NS_ASSUME_NONNULL_BEGIN
 /// 聚合开屏广告类。 提示: Splash广告只支持竖屏
 @interface DNSplashAd : NSObject <DNAdDelegateCallbackProtocol>
 
-/// 代理对象
-@property (nonatomic, weak) id<DNSplashAdDelegate> delegate;
-
-/// 开发者需传入用来弹出目标页的ViewController，一般为当前ViewController
-@property (nonatomic, weak) UIViewController *controller;
+//************** 以下是类属性 **************//
+/// 是否在开屏时隐藏状态栏，默认是YES !!!!  
+@property (nonatomic, class, getter=isHiddenStatusBar) BOOL hiddenStatusBar;
+//************** 类属性  end **************//
 
 @property (nonatomic, copy, readonly) NSString *placeId;
+/// 开发者需传入用来弹出目标页的ViewController，一般为当前ViewController
+@property (nonatomic, weak, readonly) UIViewController *controller;
+/// 默认=NO。
+/// 此方法如果设置为YES则将会在聚合SDK最后一个可控Controller时自动查找传入控制器的栈顶控制器，以避免广告无法正常弹出的问题。
+@property (nonatomic, assign, getter=isAdShowCompatibilityMode) BOOL adShowCompatibilityMode;
 
-@property (nonatomic, strong, readonly) UIView *bottomView;
-
+@property (nonatomic, strong, readonly, nullable) UIView *bottomView;
 /// 背景色//默认为白色
 @property (nonatomic, strong) UIColor *backgroundColor;
-
-/// 是否在开屏时隐藏状态栏，默认是YES
-@property (nonatomic, class, getter=isHiddenStatusBar) BOOL hiddenStatusBar;
+/// 代理对象
+@property (nonatomic, weak) id<DNSplashAdDelegate> delegate;
 
 /// 初始化方法
 /// @param placeId 广告位置id
@@ -86,10 +88,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param controller 广告被点击时push内容的控制器
 /// @param bottomView 自定义底部View，可以在此View中设置应用Logo
 - (void)loadAdAndShowWithController:(UIViewController *)controller bottomView:(UIView *_Nullable)bottomView;
-
-
-- (void)loadAdAndShowInWindow:(UIWindow *_Nullable)window __attribute__((deprecated("该接口已经废弃，请使用 -loadAdAndShowWithController:")));
-- (void)loadAdAndShowInWindow:(UIWindow *_Nullable)window withBottomView:(UIView *_Nullable)bottomView __attribute__((deprecated("该接口已经废弃，请使用 -loadAdAndShowWithController:bottomView:")));
 
 @end
 

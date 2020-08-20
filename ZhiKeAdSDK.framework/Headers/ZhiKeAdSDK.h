@@ -7,9 +7,13 @@
 //
 
 #import <ZhiKeAdSDK/ZKAdMacros.h>
+#import <ZhiKeAdSDK/ZKErrorDefine.h>
 #import <ZhiKeAdSDK/ZKAdManager.h>
 #import <ZhiKeAdSDK/ZKAdMaterialModel.h>
 #import <ZhiKeAdSDK/ZKAdVideoFileModel.h>
 #import <ZhiKeAdSDK/ZKBannerAdView.h>
 #import <ZhiKeAdSDK/ZKNativeFeedAd.h>
+#import <ZhiKeAdSDK/ZKNativeFeedAdContentView.h>
+#import <ZhiKeAdSDK/ZKRewardedVideoAd.h>
+#import <ZhiKeAdSDK/ZKInterstitialAd.h>
 #import <ZhiKeAdSDK/ZKSplashAd.h>

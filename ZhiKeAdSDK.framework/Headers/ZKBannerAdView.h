@@ -13,11 +13,13 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ZKBannerAdViewDelegate;
 @interface ZKBannerAdView : UIView
 
+@property (nonatomic, copy, readonly) NSString *positionid;
+
 @property (nonatomic, weak) id<ZKBannerAdViewDelegate> delegate;
 
-@property (nonatomic, strong) NSDictionary *adMaterial;
-
 @property (nonatomic, weak) UIViewController *controller;
+
+- (instancetype)initWithFrame:(CGRect)frame positionid:(NSString *)positionid;
 
 - (void)loadAdAndShow;
 

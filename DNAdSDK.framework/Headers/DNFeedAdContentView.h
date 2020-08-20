@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "DNAdMaterial.h"
+#import "DNFeedAdVideoView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,6 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 原生自渲染物料模型
 @property (nonatomic, strong, nullable) DNAdMaterial *adMaterial;
+
+/// 当adMaterial.creative_type == DNAdCreativeTypeVideo时才有效果
+/// 视频播放器视图，默认没有加到任何视图上面，也没有布局，请自行添加和布局
+@property (nonatomic, readonly, strong) DNFeedAdVideoView *videoView;
 
 @end
 

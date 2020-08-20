@@ -13,17 +13,21 @@
 
 /// 广告来源类型
 typedef NS_ENUM(NSInteger, DNAdProvider) {
-    DNAdProviderNormal      = 0, // 直客广告（默认）
-    DNAdProviderBaidu       = 1, // 百度
+    DNAdProviderNormal      = 0, // 直客广告（默认）5.0+
+    DNAdProviderBaidu       = 1, // 百度 5.0+
     DNAdProviderGoogle      = 2, // 谷歌 (暂未支持预留位置)
-    DNAdProviderToutiao     = 3, // 穿山甲
+    DNAdProviderToutiao     = 3, // 穿山甲 5.0+
     DNAdProviderYWN         = 4, // 英威诺 (暂未支持预留位置)
-    DNAdProviderGDT         = 5, // 广点通
+    DNAdProviderGDT         = 5, // 广点通 5.0+
     DNAdProviderBaiduHybrid = 6, // 百度hybrid (暂未支持预留位置)
     DNAdProviderIflytek     = 7, // 科大讯飞 (暂未支持预留位置)
     DNAdProviderInmobi      = 8, // inmobi (暂未支持预留位置)
     DNAdProviderSougou      = 9, // 搜狗 (暂未支持预留位置)
-    DNAdProviderJiuxin      = 10 // 久鑫 (暂未支持预留位置)
+    DNAdProviderJiuxin      = 10, // 久鑫 (暂未支持预留位置)
+    DNAdProviderKuaiShou    = 16, // 快手 5.5+
+    DNAdProviderSigmob      = 18, // Sigmob 5.5+
+    DNAdProviderMintegral   = 19, // Mintegral 5.5+
+    DNAdProviderXiaoMi      = 20, // 小米 (暂未支持预留位置)
 };
 
 /// 广告展示样式类型
@@ -31,7 +35,7 @@ typedef NS_ENUM(NSInteger, DNAdInformationStyle) {
     DNAdInformationStyleUnknow  = 0,    /// 未知类型
     DNAdInformationStyleSmall   = 1,    /// 小图
     DNAdInformationStyleGroup   = 2,    /// 组图
-    DNAdInformationStyleBig     = 3     /// 大图
+    DNAdInformationStyleBig     = 3,    /// 大图
 };
 
 /// 广告资源类型

@@ -1,5 +1,5 @@
 //
-//  _ZKAdMaterialModel.h
+//  ZKAdMaterialModel.h
 //  ZhiKeAdSDK
 //
 //  Created by Kinsun on 2020/5/6.
@@ -8,18 +8,17 @@
 
 #import <UIKit/UIKit.h>
 #import "ZKAdMacros.h"
-#import <DNFoundation/DNModelsProtocol.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ZKAdMaterialModel : NSObject <_DNEnModelsProtocol>
+@interface ZKAdMaterialModel : NSObject
 
 /// 广告标题，图文广告时需要
 @property (nonatomic, copy, readonly, nullable) NSString *title;
 /// 广告描述 (⚠️也是推⼴名称)
 @property (nonatomic, copy, readonly, nullable) NSString *desc;
-/// icon图标数组 （可能多个）
-@property (nonatomic, copy, readonly, nullable) NSArray<NSString *> *icon_url;
+/// icon图标地址
+@property (nonatomic, copy, readonly, nullable) NSString *logo_url;
 ///  广告尺寸
 @property (nonatomic, assign, readonly) CGSize adSize;
 
@@ -30,6 +29,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readonly) ZKAdCreativeType creative_type;
 /// 广告 信息流 图片资源展示形式 (1单图文，2多图，组图，3大图)
 @property (nonatomic, assign, readonly) ZKAdInformationStyle information;
+
+/// 自定义标识对象，此字段是为了开发者方便，开发者可在此字段传入分辨Material的标识符，在代理返回Material中以分辨ZKAdMaterialModel的身份。
+/// 此字段对于ZKAdMaterialModel内部没有任何作用
+@property (nonatomic, strong, nullable) id customIdentity;
 
 @end
 

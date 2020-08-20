@@ -10,12 +10,20 @@
 #define ZKAdMacros_h
 
 #import <Foundation/Foundation.h>
+
 /// 广告展示样式类型
 typedef NS_ENUM(NSInteger, ZKAdInformationStyle) {
-    ZKAdInformationStyleUnknow  = 0,    // 未知类型
-    ZKAdInformationStyleSmall   = 1,    // 小图
-    ZKAdInformationStyleGroup   = 2,    // 组图
-    ZKAdInformationStyleBig     = 3     // 大图
+    ZKAdInformationStyleUnknow          = 0, // 未知
+    ZKAdInformationStyleSmallImage      = 1, // 信息流小图
+    ZKAdInformationStyleGroupImage      = 2, // 信息流组图
+    ZKAdInformationStyleBigImage        = 3, // 信息流大图
+    ZKAdInformationStyleRewardedVideo   = 4, // 激励视频
+    ZKAdInformationStyleBannerIcon      = 5, // banner icon
+    ZKAdInformationStyleBanner          = 6, // banner(纯图)
+    ZKAdInformationStyleSplash          = 7, // 开屏 图
+    ZKAdInformationStyleSplashIcon      = 8, // 开屏 图带 icon
+    ZKAdInformationStyleInterstitialAd  = 9, // 插屏
+    ZKAdInformationStyleSplashVideo     = 12,// 视频开屏
 };
 
 /// 广告资源类型

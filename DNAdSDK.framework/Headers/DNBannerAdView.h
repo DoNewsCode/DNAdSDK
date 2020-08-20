@@ -58,10 +58,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) UIViewController *controller;
 
 @property (nonatomic, copy, readonly) NSString *placeId;
+/// 默认=NO。
+/// 此方法如果设置为YES则将会在聚合SDK最后一个可控Controller时自动查找传入控制器的栈顶控制器，以避免广告无法正常弹出的问题。
+@property (nonatomic, assign, getter=isAdShowCompatibilityMode) BOOL adShowCompatibilityMode;
 
 /// 指定构造器
 /// @param frame adview的大小，如您设置了其size会将以更优的方式返回接近设置尺寸的图像。
-/// tips！想要显示适应控件尺寸清晰度的图像必须在此初始化方法传如的frame.size中才能生效，使用view.frame不会影响图像质量
+/// tips！想要显示适应控件尺寸清晰度的图像必须在此初始化方法传入的frame.size中才能生效，使用view.frame不会影响图像质量
 /// @param placeId 广告位id
 - (instancetype)initWithFrame:(CGRect)frame placeId:(NSString *)placeId;
 
