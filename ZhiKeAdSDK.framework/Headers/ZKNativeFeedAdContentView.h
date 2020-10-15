@@ -7,13 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ZKAdMaterialModel.h"
+#import "ZKNativeFeedAdVideoView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ZKNativeFeedAdContentView : UIControl
 
 @property (nonatomic, strong, nullable) ZKAdMaterialModel *material;
+
+@property (nonatomic, strong) ZKNativeFeedAdVideoView *videoView;
 
 @end
 

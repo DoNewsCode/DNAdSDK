@@ -12,8 +12,11 @@
 #import <ZhiKeAdSDK/ZKAdMaterialModel.h>
 #import <ZhiKeAdSDK/ZKAdVideoFileModel.h>
 #import <ZhiKeAdSDK/ZKBannerAdView.h>
+#import <ZhiKeAdSDK/ZKExpressFeedAd.h>
+#import <ZhiKeAdSDK/ZKExpressFeedAdView.h>
 #import <ZhiKeAdSDK/ZKNativeFeedAd.h>
 #import <ZhiKeAdSDK/ZKNativeFeedAdContentView.h>
+#import <ZhiKeAdSDK/ZKNativeFeedAdVideoView.h>
 #import <ZhiKeAdSDK/ZKRewardedVideoAd.h>
 #import <ZhiKeAdSDK/ZKInterstitialAd.h>
 #import <ZhiKeAdSDK/ZKSplashAd.h>

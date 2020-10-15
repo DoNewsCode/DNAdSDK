@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class DNExpressFeedAd;
 @protocol DNExpressFeedAdDelegate <NSObject>
-@optional;
+@optional
 
 /// 拉取原生模板广告成功
 /// @param expressFeedAd expressFeedAd对象本身

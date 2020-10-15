@@ -3,15 +3,30 @@
 ## 步骤1：工程设置(必要)
 
 ### 平台创建应用和代码位
-> **请在多牛聚合广告平台上创建好应用ID和广告位ID。**
+> **请在聚合广告平台上创建好应用ID和广告位ID。**
 
 ### 集成SDK
 #### 方式一：手动集成framework
-> **下载**[多牛聚合广告SDK](download/iOS_sdk)**将ZIP解压，将内容拖放到项目中。**
+> **下载**[聚合广告SDK](download/iOS_sdk)**将ZIP解压，将内容拖放到项目中。**
+**5.3版本之后可以选择集成想要的联盟SDK，不需要的可以不引入**
 
 #### 方式二：pod集成framework
+
 > **支持pod方式接入，只需配置pod环境，在podfile文件中加入以下代码即可接入成功。 pod 'DNAdSDK'**
-**POD 特别注意⚠️！！因为百度AdSDK已经停止在pod更新，所以请手动下载并引入其SDK，下载地址：[百度广告SDK](download/other_sdk)**
+
+**— 5.2及之前的版本 —**
+**特别注意⚠️！！因为百度AdSDK已经停止在pod更新，所以请手动下载并引入其SDK**
+
+**— 5.3及之后的版本 —**
+**请在pod或手动引入第三方联盟的SDK， 集成哪几个请与后台配置广告保持一致。**
+* GDTMobSDK // 广点通 （建议使用pod）
+* Bytedance-UnionAD //穿山甲 （建议使用pod）
+* BaiduAdSDK //百度
+* KSAdSDK //快手 （建议使用pod）(5.5版本及以后版本开始支持)
+* SigmobAd-iOS //Sigmob （建议使用pod）(5.5版本及以后版本开始支持)
+* MintegralAdSDK //Mintegral （建议使用pod）(5.5版本及以后版本开始支持)
+
+**下载地址：[百度广告SDK](download/other_sdk)**
 
 ##   步骤2：全局配置(必要)
 
@@ -58,6 +73,9 @@
 * Security.framework
 * WebKit.framework
 * Photos.framework
+* IOKit.framework
+> **IOKit.framework 特别说明，如果在依赖库列表中找不到IOKit.framework 请右击"访达(Finder)"-"前往文件夹"-"输入下列路径，找到IOKit.framework拖入到引用库列表即可"
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk/System/Library/Frameworks/IOKit.framework
 
 ##  步骤3：开始代码接入
 
@@ -68,16 +86,26 @@
 ```
 //  当前测试通过的SDK版本
 //  --百度 = 4.67
-//  --穿山甲 = 2.9.5.6
-//  --广点通 = 4.11.5/4.11.7/4.11.8
-//  其他烦请自测，如有问题请及时联系我们
+//  --穿山甲 = 3.2.6.2
+//  --广点通 = 4.11.11
+//  --快手 = 3.3.3
+//  --Sigmob = 2.21.0
+//  --Mintegral = 6.6.1
+//  请尽量使用上述版本，其他版本未经过测试
+//  快手SDK不支持x86构架所以在使用模拟器环境下，会在控制台显示没有导入快手的包，也无法展示快手广告，该错误为正常现象。
 
-/// 服务器环境 (默认是测试环境)
-@property (nonatomic, assign) DNAdAPIType apiType;
-/// 网络请求超时时间，默认为3
-@property (nonatomic) NSTimeInterval timeoutInterval;
 /// 获取SDK版本
 @property (nonatomic, strong, readonly) NSString *SDKVersion;
+/// 网络请求超时时间，默认为3
+@property (nonatomic) NSTimeInterval timeoutInterval;
+/// 是否现实DebugLog
+@property (nonatomic, assign, getter=isShowDebugLog) BOOL showDebugLog;
+
+/// 媒体控制回调（需在startService前调用），该方法会回调控制的需求，每当SDK设定背景音乐需要关闭或恢复时都会回调此方法。
+/// 如果此回调为空SDK将会在内部控制AVAudioSession，从而达到控制背景音乐的要求。
+/// 如果您的应用对于声音控制比较严格请使用此回调以禁用SDK对AVAudioSession的控制
+/// 注：文档中已开源此项内部实现，可供您参考。此方法对于某些供应商的SDK可能无效，烦请自测。
+@property (nonatomic, copy, nullable) void (^AVAudioSessionControlCallback)(BOOL isNeedStopBackgroundSound);
 
 /// 单利对象
 + (instancetype)sharedManager;
@@ -90,14 +118,11 @@
 ### App启动时SDK初始化
 > **可以在在 AppDelegate 的方法` - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions` 中配置初始化设定**
 ```
-    DNAdKitManager *mgr = DNAdKitManager.sharedManager;
-#ifdef DEBUG
-    mgr.apiType = DNAdSDKApiTypeDebug;
-#else
-    mgr.apiType = DNAdSDKApiTypeRelease;
-#endif
-//    mgr.isLogger = YES;
-    [mgr startService];
+DNAdKitManager *mgr = DNAdKitManager.sharedManager;
+mgr.showDebugLog = YES;
+/// 调用这句可检测联盟SDK引用状况，可用来判断大部分不走代理，无回调问题
+[mgr printAllSDKVersionInfo];
+[mgr startService];
 ```
 
 ### 跳转须知
@@ -108,43 +133,48 @@
 
 #### DNSplashAd接口说明
 ```
+//************** 以下是类属性 **************//
+/// 是否在开屏时隐藏状态栏，默认是YES !!!!  
+@property (nonatomic, class, getter=isHiddenStatusBar) BOOL hiddenStatusBar;
+//************** 类属性  end **************//
+
+@property (nonatomic, copy, readonly) NSString *placeId;
+/// 开发者需传入用来弹出目标页的ViewController，一般为当前ViewController
+@property (nonatomic, weak, readonly) UIViewController *controller;
+/// 默认=NO。
+/// 此方法如果设置为YES则将会在聚合SDK最后一个可控Controller时自动查找传入控制器的栈顶控制器，以避免广告无法正常弹出的问题。
+@property (nonatomic, assign, getter=isAdShowCompatibilityMode) BOOL adShowCompatibilityMode;
+
+@property (nonatomic, strong, readonly, nullable) UIView *bottomView;
+/// 背景色//默认为白色
+@property (nonatomic, strong) UIColor *backgroundColor;
 /// 代理对象
 @property (nonatomic, weak) id<DNSplashAdDelegate> delegate;
 
-/// 开发者需传入用来弹出目标页的ViewController，一般为当前ViewController
-@property (nonatomic, weak) UIViewController *controller;
-
-@property (nonatomic, copy, readonly) NSString *placeId;
-
-@property (nonatomic, strong, readonly) UIView *bottomView;
-
-/**
- 初始化方法
- @param placeId 广告位置id 
- @return SplashAd实例
- */
+/// 初始化方法
+/// @param placeId 广告位置id
 - (instancetype)initWithPlaceId:(NSString *)placeId;
 
 /// 同下
 - (void)loadAdAndShowWithController:(UIViewController *)controller;
 
-/**
- *  在开屏页面底部设置应用自身的Logo页面或是自定义View
- *  详解：[可选]发起拉取广告请求,并将获取的广告以半屏形式展示在传入的Window的上半部，剩余部分展示传入的bottomView
- *  请注意
- *       1.bottomView需设置高，所占的空间不能过大，并保证高度不超过屏幕高度的 25%。必须设置height，如果height=0，将使用默认值200
- *       2.Splash广告只支持竖屏
- *       3.除广点通外，其余开屏均支持了safeArea
- @param controller 广告被点击时push内容的控制器
- @param bottomView 自定义底部View，可以在此View中设置应用Logo
- */
+/// 在开屏页面底部设置应用自身的Logo页面或是自定义View
+/// 详解：[可选]发起拉取广告请求,并将获取的广告以半屏形式展示在传入的Window的上半部，剩余部分展示传入的bottomView
+/// 请注意
+///     1.bottomView需设置高，所占的空间不能过大，并保证高度不超过屏幕高度的 25%。必须设置height，如果height=0，将使用默认值200
+///     2.Splash广告只支持竖屏
+///     3.除广点通外，其余开屏均支持了safeArea
+/// @param controller 广告被点击时push内容的控制器
+/// @param bottomView 自定义底部View，可以在此View中设置应用Logo
 - (void)loadAdAndShowWithController:(UIViewController *)controller bottomView:(UIView *_Nullable)bottomView;
 ```
 
 #### 创建DNSplashAd接口实例
 ```
+DNSplashAd.hiddenStatusBar = isHiddenStatusBar;
 DNSplashAd *splash = [DNSplashAd.alloc initWithPlaceId:placeID];
 splash.delegate = self;
+// splash.backgroundColor = UIColor.redColor;
 _splash = splash; //需要全局持有实例否则实例被销毁将无法正常展示广告
 CGRect frame = bottomView.frame;
 frame.size = (CGSize){UIScreen.mainScreen.bounds.size.width, 100.0}; /// 在frame中设置好bottomView的高就可以使用自定义高度，否则将使用默认100
@@ -196,13 +226,6 @@ bottomView.frame = frame;
  @param splashAd splashAd 对象
  */
 - (void)splashAdExposured:(DNSplashAd *)splashAd;
-
-/**
- 开屏广告即将分配供应商
- @param splashAd splashAd 对象
- @param type 即将加载的广告提供商类型
- */
-- (void)splashAd:(DNSplashAd *)splashAd willDispenseAdOfType:(DNAdProvider)type;
 
 /**
  直客开屏视频广告准备播放回调！！！！！！！仅仅用于直客视频类型开屏，其他无效！！！！！
@@ -277,35 +300,6 @@ bannerView.delegate = self;
 /// 点击广告上的❌关闭广告(没有关闭按钮的不回调此方法)
 /// @param bannerView bannerView对象本身
 - (void)bannerAdDidClickCloseForBannerView:(DNBannerAdView *)bannerView;
-
-/**
- banner广告即将分配供应商
- @param bannerView bannerView对象本身
- @param type 即将加载的广告提供商类型
- */
-- (void)bannerView:(DNBannerAdView *)bannerView willDispenseAdOfType:(DNAdProvider)type;
-```
-
-### 广告位类(DNAdSlot)
-> **在使用Feed流类型的广告之前我们先要看看 广告位类(DNAdSlot)这个对象，这个对象是用来设置Feed流拉取的一些配置**
-
-#### DNAdSlot接口说明
-```
-/// 请求广告的数量 默认是1 (⚠️最大是3,推荐一次请求一个 作用于信息流)
-@property (nonatomic, assign) NSInteger adCount;
-
-/// 广告位置id
-@property (nonatomic, copy) NSString *positionId;
-
-/// 指定广告整体的size (⚠️一般用于联盟的模板广告 height传0表示自适应)
-@property (nonatomic, assign) CGSize adSize;
-```
-
-#### DNAdSlot接口实例
-```
-DNAdSlot *slot = [[DNAdSlot alloc] init];
-slot.positionId = @“000”;
-slot.adCount = 1;
 ```
 
 ### 自渲染信息流(DNFeedAd) 
@@ -315,31 +309,22 @@ slot.adCount = 1;
 
 #### DNFeedAd接口说明
 ```
-/**
-*  信息流数据结果状态的 代理对象
-*/
+@property (nonatomic, copy, readonly) NSString *placeId;
+/// 信息流数据结果状态的 代理对象
 @property (nonatomic, weak) id<DNFeedAdDelegate> delegate;
-
-/*
- *  viewControllerForPresentingModalView
- *  详解：[必选]开发者需传入用来弹出目标页的ViewController，一般为当前ViewController
- */
+/// 开发者需传入用来弹出目标页的ViewController，一般为显示广告的ViewController
 @property (nonatomic, weak) UIViewController *controller;
 
-/**
- 广告位置相关信息
- */
-@property (nonatomic, readonly, strong) DNAdSlot *slot;
+/// 指定构造器
+/// @param placeId 广告位id
+- (instancetype)initWithPlaceId:(NSString *)placeId;
 
-/**
- 请求信息流广告
- */
-- (void)loadAdWithSlot:(DNAdSlot *)slot;
+/// 请求信息流广告
+/// @param count 请求广告的数量
+- (void)loadAdWithCount:(NSInteger)count;
 
-/**
- 注册元素广告关闭操作
- */
-- (void)registClickClose;
+/// 注册元素广告关闭操作
+- (void)registClickCloseWithAdMaterial:(DNAdMaterial *)adMaterial;
 ```
 
 ####  DNFeedAd接口实例
@@ -348,15 +333,11 @@ slot.adCount = 1;
 > **参见下面代码示例：**
     
 ```
-DNAdSlot *slot = DNAdSlot.alloc.init;
-slot.positionId = placeID;
-slot.adCount = 3;
-
-DNFeedAd *feedAd = [[DNFeedAd alloc] init];
+DNFeedAd *feedAd = [[DNFeedAd alloc] initWithPlaceId:placeID];
 feedAd.controller = controller;
 feedAd.delegate = self;
 _nativeFeed = feedAd; //需要全局持有实例否则实例被销毁将无法正常展示广告
-[feedAd loadAdWithSlot:slot];
+[feedAd loadAdWithCount:adCount];
 ```
 
 
@@ -390,7 +371,8 @@ _nativeFeed = feedAd; //需要全局持有实例否则实例被销毁将无法�
 - (void)feedAd:(DNFeedAd *)feedAd contentViewWillPresentScreen:(DNFeedAdContentView *)view;
 ```
 
-> **TIPS！广告请求成功后会在`- (void*)feedAdDidLoadSuccess:(DNFeedAd *)feedAd materialArray:(NSArray<DNAdMaterial *> *)materialArray`代理方法中回调回来一个DNAdMaterial数组，是用于展示在自己的列表中的数据源，自行创建DNFeedAdContentView，并分发到DNFeedAdContentView中，才可以正常使用自渲染信息流**
+> **TIPS1⚠️！广告请求成功后会在`- (void*)feedAdDidLoadSuccess:(DNFeedAd *)feedAd materialArray:(NSArray<DNAdMaterial *> *)materialArray`代理方法中回调回来一个DNAdMaterial数组，是用于展示在自己的列表中的数据源，自行创建DNFeedAdContentView，并分发到DNFeedAdContentView中，才可以正常使用自渲染信息流**
+> **TIPS2⚠️！在广告位id（placeID）不变的情况下可以重复调用-loadAdWithCount：方法，就可以获取更多条目，但是注意，因为DNFeedAd对象内部会一直持有各供应商的广告实例，不是必要的情况下不建议这么做。举个例子，比如需求是在tableview中插入几条广告，那么当tableview滑动到加载更多时可能需要更多的广告，这时候就可以使用同一个DNFeedAd实例去调用-loadAdWithCount：，在下拉刷新时重新创建DNFeedAd实例，让其内部持有各供应商的广告实例得以释放已减少内存压力。ps，如果发现点击某一条feed广告不能跳转极有可能就是您因为重新生成了DNFeedAd实例并全局引用了新的实例，而让之前的DNFeedAd释放了，但是您的Cell还在持有DNAdMaterial对象的原因。**
 
 #### DNFeedAdContentView
 > **DNFeedAdContentView是自定义信息流的基类视图，将DNFeedAdContentView作为父视图，将自定义的控件摆放在其上，才能正常使用自渲染信息流**
@@ -406,6 +388,10 @@ _nativeFeed = feedAd; //需要全局持有实例否则实例被销毁将无法�
 
 /// 原生自渲染物料模型
 @property (nonatomic, strong, nullable) DNAdMaterial *adMaterial;
+
+/// 当adMaterial.creative_type == DNAdCreativeTypeVideo时才有效果
+/// 视频播放器视图，默认没有加到任何视图上面，也没有布局，请自行添加和布局
+@property (nonatomic, readonly, strong) DNFeedAdVideoView *videoView;
 ```
 
 ### 模版信息流(DNExpressFeedAd) 
@@ -419,33 +405,34 @@ _nativeFeed = feedAd; //需要全局持有实例否则实例被销毁将无法�
 
 > ** 模板为了优化展示速度,会使用本地模板,请求时会拦截相关数据.如果接入方正在使用H5的页面发送请求,会造成请求body清空,其他逻辑不变.如果使用body传参请更换其他方式.例如:jsBridge方式.**
 
+> **TIPS⚠️！在广告位id（placeID）不变的情况下可以重复调用-loadAdWithCount：方法，就可以获取更多条目，但是注意，因为DNExpressFeedAd对象内部会一直持有各供应商的广告实例，不是必要的情况下不建议这么做。举个例子，比如需求是在tableview中插入几条广告，那么当tableview滑动到加载更多时可能需要更多的广告，这时候就可以使用同一个DNFeedAd实例去调用-loadAdWithCount：，在下拉刷新时重新创建DNExpressFeedAd实例，让其内部持有各供应商的广告实例得以释放已减少内存压力。ps，如果发现点击某一条feed广告不能跳转极有可能就是您因为重新生成了DNExpressFeedAd实例并全局引用了新的实例，而让之前的DNExpressFeedAd释放了，但是您的Cell还在持有DNExpressFeedAdView对象的原因。**
+
 #### DNExpressFeedAd接口说明
 ```
+@property (nonatomic, copy, readonly) NSString *placeId;
+@property (nonatomic, assign, readonly) CGSize adSize;
 /// 信息流数据结果状态的 代理对象
 @property (nonatomic, weak) id<DNExpressFeedAdDelegate> delegate;
-
 /// [必选]开发者需传入用来弹出目标页的ViewController，一般为当前ViewController
 @property (nonatomic, weak) UIViewController *controller;
 
-/// 广告位
-@property (nonatomic, readonly, strong) DNAdSlot *slot;
+/// 指定构造器
+/// @param placeId 广告位id
+/// @param adSize 广告尺寸
+- (instancetype)initWithPlaceId:(NSString *)placeId adSize:(CGSize)adSize;
 
-
-/// 请求广告
-- (void)loadAdWithSlot:(DNAdSlot *)slot;
+/// 请求信息流广告
+/// @param count 请求广告的数量
+- (void)loadAdWithCount:(NSInteger)count;
 ```
 
 #### DNExpressFeedAd接口实例
 ```
-DNAdSlot *slot = DNAdSlot.alloc.init;
-slot.positionId = placeID;
-slot.adCount = 1;
-
-DNExpressFeedAd *expressAd = DNExpressFeedAd.alloc.init;
+DNExpressFeedAd *expressAd = [DNExpressFeedAd.alloc initWithPlaceId:placeID adSize:adSize];
 expressAd.controller = controller;
 expressAd.delegate = self;
 _expressFeed = expressAd; //需要全局持有实例否则实例被销毁将无法正常展示广告
-[expressAd loadAdWithSlot:slot];
+[expressAd loadAdWithCount:adCount];
 ```
 
 
@@ -588,11 +575,6 @@ _interstitial = interstitial; //需要全局持有实例否则实例被销毁将
 /// 全屏广告页将要关闭
 /// @param interstitialAd interstitialAd对象本身
 - (void)interstitialAdDetailsDidClosedForInterstitialAd:(DNInterstitialAd *)interstitialAd;
-
-/// 插屏广告即将分配供应商
-/// @param interstitialAd interstitialAd对象本身
-/// @param type 即将加载的广告提供商类型
-- (void)interstitialAd:(DNInterstitialAd *)interstitialAd willDispenseAdOfType:(DNAdProvider)type;
 ```
 
 ### 激励视频(DNRewardedVideoAd)
@@ -666,17 +648,11 @@ _rewardedVideo = rewardedVideo; //需要全局持有实例否则实例被销毁�
 /// @param rewardedVideoAd rewardedVideoAd对象本身
 - (void)rewardVideoAdDidPlayFinish:(DNRewardedVideoAd *)rewardedVideoAd;
 
-/**
- 激励视频广告即将分配供应商
- @param rewardedVideoAd rewardedVideoAd对象本身
- @param type 即将加载的广告提供商类型
- */
-- (void)rewardVideoAd:(DNRewardedVideoAd *)rewardedVideoAd willDispenseAdOfType:(DNAdProvider)type;
 ```
 
 
-## 扩展：各个供应商提供的个性回调(Beta)
-> **在之前的开发过程中您可能已经介入过【广点通】【穿山甲】【百度】的AdSDK，因为聚合SDK统一了它们的共性，因此有些厂商的非共性代理回调就没有办法在聚合广告的代理中体现，没关系，有了`DNAdDelegateCallbackProtocol`就能完美解决这个问题**
+## 扩展：各个供应商提供的个性回调(Beta 1.1)
+> **在之前的开发过程中您可能已经介入过【广点通】【穿山甲】【百度】或更多聚合支持的AdSDK，因为聚合SDK统一了它们的共性，因此有些厂商的非共性代理回调就没有办法在聚合广告的代理中体现，没关系，有了`DNAdDelegateCallbackProtocol`就能完美解决这个问题**
 
 > **只要遵守了`DNAdDelegateCallbackProtocol`这个协议（现全部广告都支持此协议），就可以在开发过程中使用“adDelegateCallback”**
 
@@ -686,7 +662,7 @@ _rewardedVideo = rewardedVideo; //需要全局持有实例否则实例被销毁�
 ```
 为兼容各种代理回调方式，所以DNAdDelegateCallback有两个参数一个返回值。
 第一个是该回调的广告类型，是为了区分相同名字的不同供应商代理会被覆盖的问题。
-第二个是参数，这个参数并不是供应商广告回调的AD类，而是其之后的参数，比如视频回调的时候的类型，详见下面的表，基本数据类型会包装成NSNumber，结构体会包装成NSValue。
+第二个是参数，这个参数并不是供应商广告回调的AD类，而是其之后的参数，比如视频回调的时候的类型，详见下面的表，基本数据类型会包装成NSNumber，超过两个参数会包装成字典，key就是原形参名称。
 
 返回值亦是一样，如果该代理方法有要返回值，请直接returen值，如果是基本数据类型，也是包装成NSNumber再返回，结构体装成NSValue再返回，没有返回值的return nil。
 
@@ -723,11 +699,19 @@ bottomView.frame = frame;
 
 Key | 供应商 | 参数解释| 备注
 :-: | :-: | :-: | :-:
+splashAdSuccessPresentScreen: | 广点通 | - | 开屏广告成功展示
+splashAdApplicationWillEnterBackground: | 广点通 | - | 当点击下载应用时会调用系统程序打开，应用切换到后台
 splashAdWillPresentFullScreenModal: | 广点通 | - | 开屏广告点击以后即将弹出全屏广告页
 splashAdDidPresentFullScreenModal: | 广点通 | - | 开屏广告点击以后弹出全屏广告页
 splashAdWillDismissFullScreenModal: | 广点通 | - | 点击以后全屏广告页将要关闭
 splashAdLifeTime: | 广点通 | NSNumber包裹的NSUInteger | 开屏广告剩余时间回调
 splashAdCountdownToZero: | 穿山甲 | - | 当开屏广告倒计时等于零时调用此方法
+splashDidReady:AndAdType:VideoDuration: | 百度 | NSDictionary参数集合 | 广告加载完成
+ksad_splashAdVideoDidSkipped: | 快手 | - | 视频闪屏广告跳过
+splashADLoadSuccess: | Mintegral | - | 加载广告成功时调用。
+splashADShowSuccess: | Mintegral | - | 成功显示广告时调用。
+splashADDidLeaveApplication: | Mintegral | - | 当应用程序因tap事件即将离开时调用。调用此方法后不久，应用程序将被移到后台。
+splashAD:timeLeft: | Mintegral | NSNumber包裹的NSUInteger | 在剩余倒计时更新时调用。。
 
 > **Interstitial插屏**
 
@@ -745,15 +729,21 @@ unifiedInterstitialAdViewWillDismissVideoVC: | 广点通 | - | 插屏2.0视频�
 unifiedInterstitialAdViewDidDismissVideoVC: | 广点通 | - | 插屏2.0视频广告详情页 DidDismiss 回调
 nativeExpresInterstitialAdWillClose: | 穿山甲 | - | 当InterstitialAd即将关闭时调用此方法。
 
-> **Rewarded插屏**
+> **Rewarded激励视频**
 
 Key | 供应商 | 参数解释| 备注
 :-: | :-: | :-: | :-:
 nativeExpressRewardedVideoAdDidDownLoadVideo: | 穿山甲 | - | 成功缓存时调用此方法。
+nativeExpressRewardedVideoAdViewRenderSuccess: | 穿山甲 | - | 在成功呈现nativeExpressAdView时调用此方法。
 nativeExpressRewardedVideoAdWillClose: | 穿山甲 | - | 此方法在视频广告即将关闭时调用。
 nativeExpressRewardedVideoAdDidClickSkip: | 穿山甲 | - | 当用户单击跳过按钮时调用此方法。
 nativeExpressRewardedVideoAdServerRewardDidFail: | 穿山甲 | - | 异步请求的服务器验证失败。 返回值不是2000。
 nativeExpressRewardedVideoAdDidCloseOtherController:interactionType: | 穿山甲 | NSNumber包裹的BUInteractionType | 当另一个控制器关闭时调用此方法。
+rewardedVideoAdWillClose: | 快手 | - | 此方法在视频广告即将关闭时调用。
+rewardedVideoAdDidClickSkip: | 快手 | - | 此方法在用户单击“跳过”按钮时调用。
+rewardedVideoAdStartPlay: | 快手 | - | 此方法在视频开始播放时调用。
+rewardedVideoAd:hasReward: | 快手 | - | 此方法在用户关闭视频广告时调用。
+onVideoEndCardShowSuccess:unitId: | Mintegral | - | 仅当广告有endcard内容时调用，当endcard显示时调用。
 
 > **ExpressFeed模版信息流**
 
@@ -772,4 +762,34 @@ nativeExpressAdViewDidDismissVideoVC: | 广点通 | 同上 | 原生视频模板�
 Key | 供应商 | 参数解释| 备注
 :-: | :-: | :-: | :-:
 gdt_unifiedNativeAdViewApplicationWillEnterBackground: | 广点通 | DNFeedAdContentView对象 | 当点击应用下载或者广告调用系统程序打开时调用
+gdt_unifiedNativeAdView:playerStatusChanged:userInfo: | 广点通 | NSDictionary参数集合 | 当点击应用下载或者广告调用系统程序打开时调用
+nativeAdDidLoad: | 快手 | DNFeedAdContentView对象 | 当本地广告材料成功加载时，将调用此方法
+nativeAd:didFailWithError: | 快手 | DNFeedAdContentView对象 | 当本机ad materiala加载失败时调用此方法
 
+
+## AVAudioSessionControl 内部实现
+
+```
+- (void)setNeedStopBackgroundSound:(BOOL)isNeedStopBackgroundSound {
+    if (_AVAudioSessionControlCallback != nil) {
+        _AVAudioSessionControlCallback(isNeedStopBackgroundSound);
+    } else {
+        AVAudioSession *audioSession = AVAudioSession.sharedInstance;
+        if (isNeedStopBackgroundSound) {
+            if (audioSession.category != AVAudioSessionCategorySoloAmbient) {
+                [audioSession setCategory:AVAudioSessionCategorySoloAmbient withOptions:AVAudioSessionCategoryOptionMixWithOthers|AVAudioSessionCategoryOptionDefaultToSpeaker error:nil];
+            }
+            if (audioSession.isOtherAudioPlaying) {
+                [audioSession setActive:YES withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
+            }
+        } else {
+            if (audioSession.category != AVAudioSessionCategoryAmbient) {
+                [audioSession setCategory:AVAudioSessionCategoryAmbient withOptions:AVAudioSessionCategoryOptionMixWithOthers|AVAudioSessionCategoryOptionDefaultToSpeaker error:nil];
+            }
+            if (!audioSession.isOtherAudioPlaying) {
+                [audioSession setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
+            }
+        }
+    }
+}
+```

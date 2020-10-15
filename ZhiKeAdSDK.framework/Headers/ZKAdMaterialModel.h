@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 广告描述 (⚠️也是推⼴名称)
 @property (nonatomic, copy, readonly, nullable) NSString *desc;
 /// icon图标地址
+@property (nonatomic, copy, readonly, nullable) NSString *icon_url;
+/// 直客广告logo
 @property (nonatomic, copy, readonly, nullable) NSString *logo_url;
 ///  广告尺寸
 @property (nonatomic, assign, readonly) CGSize adSize;

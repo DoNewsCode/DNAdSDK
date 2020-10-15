@@ -8,12 +8,13 @@
 
 //  当前测试通过的SDK版本
 //  --百度 = 4.67
-//  --穿山甲 = 3.1.0.4
-//  --广点通 = 4.11.9
-//  --快手 = 3.2.1
-//  --Sigmob = 2.19.1
-//  --Mintegral = 6.3.5.0
-//  请务必使用上述版本，其他版本未经过测试
+//  --穿山甲 = 3.2.6.2
+//  --广点通 = 4.11.11
+//  --快手 = 3.3.3
+//  --Sigmob = 2.21.0
+//  --Mintegral = 6.6.1
+//  请尽量使用上述版本，其他版本未经过测试
+//  快手SDK不支持x86构架所以在使用模拟器环境下，会在控制台显示没有导入快手的包，也无法展示快手广告，该错误为正常现象。
 
 #import <Foundation/Foundation.h>
 
@@ -39,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 如果此回调为空SDK将会在内部控制AVAudioSession，从而达到控制背景音乐的要求。
 /// 如果您的应用对于声音控制比较严格请使用此回调以禁用SDK对AVAudioSession的控制
 /// 注：文档中已开源此项内部实现，可供您参考。此方法对于某些供应商的SDK可能无效，烦请自测。
-@property (nonatomic, copy, nullable) void (^AVAudioSessionContrlCallback)(BOOL isNeedStopBackgroundSound);
+@property (nonatomic, copy, nullable) void (^AVAudioSessionControlCallback)(BOOL isNeedStopBackgroundSound);
 
 + (instancetype)sharedManager;
 

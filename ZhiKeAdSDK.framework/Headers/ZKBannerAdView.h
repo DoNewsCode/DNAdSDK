@@ -55,9 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param bannerView bannerView对象本身
 - (void)bannerAdDetailsDidCloseForBannerView:(ZKBannerAdView *)bannerView;
 
-/// 点击广告上的❌关闭广告(暂时没有关闭按钮)
+/// 点击广告上的❌关闭广告
 /// @param bannerView bannerView对象本身
-//- (void)bannerAdDidClickCloseForBannerView:(ZKBannerAdView *)bannerView;
+- (void)bannerAdDidClickCloseForBannerView:(ZKBannerAdView *)bannerView;
 
 @end
 

@@ -63,6 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 默认=NO。
 /// 此方法如果设置为YES则将会在-rewardedVideoShowInController:调用时自动查找传入控制器的栈顶控制器，以避免广告无法正常弹出的问题。
 @property (nonatomic, assign, getter=isAdShowCompatibilityMode) BOOL adShowCompatibilityMode;
+/// 激励视频是否有效
+@property (nonatomic, getter=isAdValid, readonly) BOOL adValid;
 
 /// 构造方法
 /// @param placeId placeId - 广告位 ID

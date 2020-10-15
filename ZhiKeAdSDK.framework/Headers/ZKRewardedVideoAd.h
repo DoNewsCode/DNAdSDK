@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, readonly) NSString *placeId;
 
+@property (nonatomic, getter=isAdValid, readonly) BOOL adValid;
+
 /// 构造方法
 /// @param placeId placeId - 广告位 ID
 - (instancetype)initWithPlaceId:(NSString *)placeId;
