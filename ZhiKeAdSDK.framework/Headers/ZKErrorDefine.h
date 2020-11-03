@@ -17,3 +17,6 @@ FOUNDATION_EXPORT const NSInteger ZKGetAdEmptyErrorCode;
 
 FOUNDATION_EXPORT NSErrorDomain const ZKAdLoadResourcesErrorDomain;
 FOUNDATION_EXPORT const NSInteger ZKAdLoadResourcesErrorCode;
+
+FOUNDATION_EXPORT NSErrorDomain const ZKAdLoadNotReadyErrorDomain;
+FOUNDATION_EXPORT const NSInteger ZKAdLoadNotReadyErrorCode;
