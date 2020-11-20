@@ -32,6 +32,9 @@ FOUNDATION_EXPORT NSErrorDomain const DNStrategyErrorDomain; ///获取广告时�
 FOUNDATION_EXPORT NSErrorDomain const DNAdSDKVersionTooOldErrorDomain; /// SDK版本过旧
 FOUNDATION_EXPORT const NSInteger DNAdSDKVersionTooOldErrorCode;
 
+FOUNDATION_EXPORT NSErrorDomain const DNSupplierErrorDomain;
+FOUNDATION_EXPORT const NSUInteger DNSupplierErrorCode;
+
 FOUNDATION_EXPORT NSErrorDomain const DNSplashGetTooFrequentlynErrorDomain; ///获取开屏广告过于频繁
 FOUNDATION_EXPORT const NSInteger DNSplashGetTooFrequentlynErrorCode;
 FOUNDATION_EXPORT NSErrorDomain const DNSplashADIsShowingErrorDomain; ///已经有开屏广告正在展示

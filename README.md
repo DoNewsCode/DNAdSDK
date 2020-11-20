@@ -13,11 +13,6 @@
 #### 方式二：pod集成framework
 
 > **支持pod方式接入，只需配置pod环境，在podfile文件中加入以下代码即可接入成功。 pod 'DNAdSDK'**
-
-**— 5.2及之前的版本 —**
-**特别注意⚠️！！因为百度AdSDK已经停止在pod更新，所以请手动下载并引入其SDK**
-
-**— 5.3及之后的版本 —**
 **请在pod或手动引入第三方联盟的SDK， 集成哪几个请与后台配置广告保持一致。**
 * GDTMobSDK // 广点通 （建议使用pod）
 * Bytedance-UnionAD //穿山甲 （建议使用pod）
@@ -26,6 +21,7 @@
 * SigmobAd-iOS //Sigmob （建议使用pod）(5.5版本及以后版本开始支持)
 * MintegralAdSDK //Mintegral （建议使用pod）(5.5版本及以后版本开始支持)
 
+**特别注意⚠️！！因为百度AdSDK已经停止在pod更新，所以请手动下载并引入其SDK**
 **下载地址：[百度广告SDK](download/other_sdk)**
 
 ##   步骤2：全局配置(必要)
@@ -42,13 +38,20 @@
 </dict>
 ```
 
+> **iOS14之后获得IDFA需要申请，所以请在info.plist中添加 Privacy - Tracking Usage Description 描述**
+> **TIPS：可以右击info.plist文件，选择Open As -> Source Code，然后将下列代码粘贴进去**
+```
+<key>NSUserTrackingUsageDescription</key>
+<string>只有您使用‘允许跟踪’才能为您推荐个性化内容与活动,关闭跟踪并不会减少内容的推荐,只是可能会降低对您的个性化推荐.</string>
+```
+
 ### 配置项目三方库的编译选项
 > **点击主工程 -> Build Settings -> 搜索Other Linker Flags -> 在列表中找到Other Linker Flags -> 添加参数`-ObjC`**
 > **点击主工程 -> Build Settings -> 搜索Enable Bitcode -> 在列表中找到Enable Bitcode -> 修改参数为`NO`**
 
 ### 运行环境配置
 * 支持系统 iOS 9.0 及以上
-* SDK编译环境 Xcode 11.4.1
+* SDK编译环境 Xcode 12.1 (12A7403)
 * 支持架构： x86-64, armv7, armv7s, arm64
 
 ### 添加依赖库（pod 接入方式可以略过此步）
@@ -86,13 +89,12 @@
 ```
 //  当前测试通过的SDK版本
 //  --百度 = 4.67
-//  --穿山甲 = 3.2.6.2
-//  --广点通 = 4.11.11
-//  --快手 = 3.3.3
-//  --Sigmob = 2.21.0
-//  --Mintegral = 6.6.1
+//  --穿山甲 = 3.3.0.5
+//  --广点通 = 4.11.12
+//  --快手 = 3.3.5
+//  --Sigmob = 2.22.0
+//  --Mintegral = 6.6.8
 //  请尽量使用上述版本，其他版本未经过测试
-//  快手SDK不支持x86构架所以在使用模拟器环境下，会在控制台显示没有导入快手的包，也无法展示快手广告，该错误为正常现象。
 
 /// 获取SDK版本
 @property (nonatomic, strong, readonly) NSString *SDKVersion;
@@ -106,13 +108,19 @@
 /// 如果您的应用对于声音控制比较严格请使用此回调以禁用SDK对AVAudioSession的控制
 /// 注：文档中已开源此项内部实现，可供您参考。此方法对于某些供应商的SDK可能无效，烦请自测。
 @property (nonatomic, copy, nullable) void (^AVAudioSessionControlCallback)(BOOL isNeedStopBackgroundSound);
+/// 当上面的回调没有被实现，SDK需要暂停或恢复背景音乐的时候会设置下面的值，入无特殊需求请不要更改。
+/// 如果您希望应用在播放广告的时候视频媒体是不随静音按钮状态而静音的请设置suspendBackgroundSoundAudioSessionCategory = AVAudioSessionCategoryPlayback
+/// 当SDK需要暂停背景音乐的时候，会将`AVAudioSession setCategory`设置下面的值默认=AVAudioSessionCategorySoloAmbient
+@property (nonatomic) AVAudioSessionCategory suspendBackgroundSoundAudioSessionCategory;
+/// 当SDK需要恢复背景音乐的时候，会将`AVAudioSession setCategory`设置下面的值默认=AVAudioSessionCategoryAmbient
+@property (nonatomic) AVAudioSessionCategory resumeBackgroundSoundAudioSessionCategory;
 
 /// 单利对象
 + (instancetype)sharedManager;
 /// 启动初始化服务，可在非主线程中执行
 - (void)startService;
 /// 打印所有SDK版本信息
-- (void)printAllSDKVersionInfo;
+- (NSString *)printAllSDKVersionInfo;
 ```
 
 ### App启动时SDK初始化
@@ -268,9 +276,6 @@ bannerView.delegate = self;
 
 #### DNBannerAdViewDelegate回调说明
 ```
-/// 即将开始加载banner广告
-/// @param bannerView bannerView对象本身
-- (void)bannerAdWillLoadForBannerView:(DNBannerAdView *)bannerView;
 
 /// bannerAdView加载成功时的回调
 /// banner是可能有多条广告轮流展示的，所以banner每次展示了新的广告都会回调此方法
@@ -280,6 +285,10 @@ bannerView.delegate = self;
 /// bannerAdView加载失败时的回调
 /// @param bannerView bannerView对象本身
 - (void)bannerAdDidLoadFaildForBannerView:(DNBannerAdView *)bannerView error:(NSError *)error;
+
+/// bannerAdView发生轮换时的回调，不会轮换的供应商将不会回调此方法
+/// @param bannerView bannerView对象本身
+- (void)bannerAdDidRotationForBannerView:(DNBannerAdView *)bannerView;
 
 /// bannerAdView曝光的回调
 /// @param bannerView bannerView对象本身
@@ -770,21 +779,31 @@ nativeAd:didFailWithError: | 快手 | DNFeedAdContentView对象 | 当本机ad ma
 ## AVAudioSessionControl 内部实现
 
 ```
+
+- (instancetype)init {
+    if (self = [super init]) {
+        _suspendBackgroundSoundAudioSessionCategory = AVAudioSessionCategorySoloAmbient;
+        _resumeBackgroundSoundAudioSessionCategory = AVAudioSessionCategoryAmbient;
+    }
+    return self;
+}
+
 - (void)setNeedStopBackgroundSound:(BOOL)isNeedStopBackgroundSound {
+    _isNeedStopBackgroundSound = isNeedStopBackgroundSound;
     if (_AVAudioSessionControlCallback != nil) {
         _AVAudioSessionControlCallback(isNeedStopBackgroundSound);
     } else {
         AVAudioSession *audioSession = AVAudioSession.sharedInstance;
         if (isNeedStopBackgroundSound) {
-            if (audioSession.category != AVAudioSessionCategorySoloAmbient) {
-                [audioSession setCategory:AVAudioSessionCategorySoloAmbient withOptions:AVAudioSessionCategoryOptionMixWithOthers|AVAudioSessionCategoryOptionDefaultToSpeaker error:nil];
+            if (audioSession.category != _suspendBackgroundSoundAudioSessionCategory) {
+                [audioSession setCategory:_suspendBackgroundSoundAudioSessionCategory withOptions:AVAudioSessionCategoryOptionMixWithOthers|AVAudioSessionCategoryOptionDefaultToSpeaker error:nil];
             }
             if (audioSession.isOtherAudioPlaying) {
                 [audioSession setActive:YES withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
             }
         } else {
-            if (audioSession.category != AVAudioSessionCategoryAmbient) {
-                [audioSession setCategory:AVAudioSessionCategoryAmbient withOptions:AVAudioSessionCategoryOptionMixWithOthers|AVAudioSessionCategoryOptionDefaultToSpeaker error:nil];
+            if (audioSession.category != _resumeBackgroundSoundAudioSessionCategory) {
+                [audioSession setCategory:_resumeBackgroundSoundAudioSessionCategory withOptions:AVAudioSessionCategoryOptionMixWithOthers|AVAudioSessionCategoryOptionDefaultToSpeaker error:nil];
             }
             if (!audioSession.isOtherAudioPlaying) {
                 [audioSession setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];

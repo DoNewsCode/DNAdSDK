@@ -8,15 +8,16 @@
 
 //  当前测试通过的SDK版本
 //  --百度 = 4.67
-//  --穿山甲 = 3.2.6.2
-//  --广点通 = 4.11.11
-//  --快手 = 3.3.3
-//  --Sigmob = 2.21.0
-//  --Mintegral = 6.6.1
+//  --穿山甲 = 3.3.0.5
+//  --广点通 = 4.11.12
+//  --快手 = 3.3.5
+//  --Sigmob = 2.22.0
+//  --Mintegral = 6.6.8
 //  请尽量使用上述版本，其他版本未经过测试
 //  快手SDK不支持x86构架所以在使用模拟器环境下，会在控制台显示没有导入快手的包，也无法展示快手广告，该错误为正常现象。
 
 #import <Foundation/Foundation.h>
+#import <AVFoundation/AVFoundation.h>
 
 typedef NS_ENUM(NSInteger, DNAdSDKApiType) {
     DNAdSDKApiTypeRelease = 0,
@@ -41,6 +42,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// 如果您的应用对于声音控制比较严格请使用此回调以禁用SDK对AVAudioSession的控制
 /// 注：文档中已开源此项内部实现，可供您参考。此方法对于某些供应商的SDK可能无效，烦请自测。
 @property (nonatomic, copy, nullable) void (^AVAudioSessionControlCallback)(BOOL isNeedStopBackgroundSound);
+/// 当上面的回调没有被实现，SDK需要暂停或恢复背景音乐的时候会设置下面的值，入无特殊需求请不要更改。
+/// 如果您希望应用在播放广告的时候视频媒体是不随静音按钮状态而静音的请设置suspendBackgroundSoundAudioSessionCategory = AVAudioSessionCategoryPlayback
+/// 当SDK需要暂停背景音乐的时候，会将`AVAudioSession setCategory`设置下面的值默认=AVAudioSessionCategorySoloAmbient
+@property (nonatomic) AVAudioSessionCategory suspendBackgroundSoundAudioSessionCategory;
+/// 当SDK需要恢复背景音乐的时候，会将`AVAudioSession setCategory`设置下面的值默认=AVAudioSessionCategoryAmbient
+@property (nonatomic) AVAudioSessionCategory resumeBackgroundSoundAudioSessionCategory;
 
 + (instancetype)sharedManager;
 

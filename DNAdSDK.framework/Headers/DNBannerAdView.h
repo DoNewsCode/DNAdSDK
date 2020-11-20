@@ -15,9 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol DNBannerAdViewDelegate <NSObject>
 
 @optional
-/// 即将开始加载banner广告
-/// @param bannerView bannerView对象本身
-- (void)bannerAdWillLoadForBannerView:(DNBannerAdView *)bannerView;
 
 /// bannerAdView加载成功时的回调
 /// banner是可能有多条广告轮流展示的，所以banner每次展示了新的广告都会回调此方法
@@ -27,6 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// bannerAdView加载失败时的回调
 /// @param bannerView bannerView对象本身
 - (void)bannerAdDidLoadFaildForBannerView:(DNBannerAdView *)bannerView error:(NSError *)error;
+
+/// bannerAdView发生轮换时的回调，不会轮换的供应商将不会回调此方法
+/// @param bannerView bannerView对象本身
+- (void)bannerAdDidRotationForBannerView:(DNBannerAdView *)bannerView;
 
 /// bannerAdView曝光的回调
 /// @param bannerView bannerView对象本身
