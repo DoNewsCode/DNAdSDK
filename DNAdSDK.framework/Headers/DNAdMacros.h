@@ -24,6 +24,7 @@ typedef NS_ENUM(NSInteger, DNAdProvider) {
     DNAdProviderInmobi      = 8, // inmobi (暂未支持预留位置)
     DNAdProviderSougou      = 9, // 搜狗 (暂未支持预留位置)
     DNAdProviderJiuxin      = 10, // 久鑫 (暂未支持预留位置)
+    DNAdProviderJingDong    = 15, // 京东 5.8+
     DNAdProviderKuaiShou    = 16, // 快手 5.5+
     DNAdProviderSigmob      = 18, // Sigmob 5.5+
     DNAdProviderMintegral   = 19, // Mintegral 5.5+

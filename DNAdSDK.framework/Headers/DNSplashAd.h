@@ -65,8 +65,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// 默认=NO。
 /// 此方法如果设置为YES则将会在聚合SDK最后一个可控Controller时自动查找传入控制器的栈顶控制器，以避免广告无法正常弹出的问题。
 @property (nonatomic, assign, getter=isAdShowCompatibilityMode) BOOL adShowCompatibilityMode;
-
-@property (nonatomic, strong, readonly, nullable) UIView *bottomView;
+/// 自定义底部View，可以在此View中设置应用Logo
+/// 在开屏页面底部设置应用自身的Logo页面或是自定义View
+/// 详解：[可选]发起拉取广告请求,并将获取的广告以半屏形式展示在传入的Window的上半部，剩余部分展示传入的bottomView
+/// 请注意
+///     1.bottomView需设置高，所占的空间不能过大，并保证高度不超过屏幕高度的 25%。必须设置height，如果height=0，将使用默认值200
+///     2.Splash广告只支持竖屏
+///     3.除广点通外，其余开屏均支持了safeArea
+@property (nonatomic, strong, nullable) UIView *bottomView;
 /// 背景色//默认为白色
 @property (nonatomic, strong) UIColor *backgroundColor;
 /// 代理对象
@@ -76,18 +82,15 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param placeId 广告位置id
 - (instancetype)initWithPlaceId:(NSString *)placeId;
 
-/// 同下
+/// 请求并展示开屏
+/// @param controller 当前最顶部的控制器，用于弹出落地页
 - (void)loadAdAndShowWithController:(UIViewController *)controller;
 
-/// 在开屏页面底部设置应用自身的Logo页面或是自定义View
-/// 详解：[可选]发起拉取广告请求,并将获取的广告以半屏形式展示在传入的Window的上半部，剩余部分展示传入的bottomView
-/// 请注意
-///     1.bottomView需设置高，所占的空间不能过大，并保证高度不超过屏幕高度的 25%。必须设置height，如果height=0，将使用默认值200
-///     2.Splash广告只支持竖屏
-///     3.除广点通外，其余开屏均支持了safeArea
-/// @param controller 广告被点击时push内容的控制器
-/// @param bottomView 自定义底部View，可以在此View中设置应用Logo
-- (void)loadAdAndShowWithController:(UIViewController *)controller bottomView:(UIView *_Nullable)bottomView;
+@end
+
+@interface DNSplashAd (Deprecated)
+
+- (void)loadAdAndShowWithController:(UIViewController *)controller bottomView:(UIView *_Nullable)bottomView API_DEPRECATED("请使用DNSplashAd.bottomView设置应用logo", ios(1.0, 1.0));
 
 @end
 

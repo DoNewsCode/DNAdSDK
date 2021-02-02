@@ -14,7 +14,6 @@
 //  --Sigmob = 2.22.0
 //  --Mintegral = 6.6.8
 //  请尽量使用上述版本，其他版本未经过测试
-//  快手SDK不支持x86构架所以在使用模拟器环境下，会在控制台显示没有导入快手的包，也无法展示快手广告，该错误为正常现象。
 
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>

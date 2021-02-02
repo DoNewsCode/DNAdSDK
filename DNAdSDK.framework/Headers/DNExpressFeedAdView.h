@@ -24,8 +24,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// 此字段对于DNExpressFeedAdView内部没有任何作用
 @property (nonatomic, strong, nullable) id customIdentity;
 
-/// 渲染ADView，请务必在View显示前调用，否则会什么也不显示。延迟渲染是为了避免view过多时内存溢出的问题。
+/// 渲染ADView，请务必在View显示前调用，否则会什么也不显示。
+/// 延迟渲染是为了避免view过多时内存溢出的问题。
 - (void)render;
+
+/// 在加载广告时传入的大致尺寸
+@property (nonatomic, assign, readonly) CGSize roughlySize;
+/// 广告实图更新了推荐使用的尺寸回调（广点通，穿山甲会动态更新高度所以会使用这个回调更新）
+@property (nonatomic, copy, nullable) void (^adViewUpdateSizeCallback)(DNExpressFeedAdView *view, CGSize adSize);
 
 - (instancetype)initWithFrame:(CGRect)frame API_DEPRECATED("请勿主动构造DNExpressFeedAdView", ios(9.0,13.0));
 
