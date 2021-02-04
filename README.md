@@ -17,9 +17,10 @@
 * GDTMobSDK // 广点通 （建议使用pod）
 * Bytedance-UnionAD //穿山甲 （建议使用pod）
 * BaiduAdSDK //百度
-* KSAdSDK //快手 （建议使用pod）(5.5版本及以后版本开始支持)
-* SigmobAd-iOS //Sigmob （建议使用pod）(5.5版本及以后版本开始支持)
-* MintegralAdSDK //Mintegral （建议使用pod）(5.5版本及以后版本开始支持)
+* JDYunSDK //京准通/京东 (5.8版本及以后版本开始支持)
+* KSAdSDK //快手 （建议使用pod）
+* SigmobAd-iOS //Sigmob （建议使用pod）
+* MintegralAdSDK //Mintegral （建议使用pod）
 
 **特别注意⚠️！！因为百度AdSDK已经停止在pod更新，所以请手动下载并引入其SDK**
 **下载地址：[百度广告SDK](download/other_sdk)**
@@ -51,7 +52,7 @@
 
 ### 运行环境配置
 * 支持系统 iOS 9.0 及以上
-* SDK编译环境 Xcode 12.1 (12A7403)
+* SDK编译环境 Xcode 12.2 (12B45b)
 * 支持架构： x86-64, armv7, armv7s, arm64
 
 ### 添加依赖库（pod 接入方式可以略过此步）
@@ -88,12 +89,13 @@
 ### 接口说明
 ```
 //  当前测试通过的SDK版本
-//  --百度 = 4.67
-//  --穿山甲 = 3.3.0.5
-//  --广点通 = 4.11.12
-//  --快手 = 3.3.5
-//  --Sigmob = 2.22.0
-//  --Mintegral = 6.6.8
+//  --百度 = 4.74
+//  --穿山甲 = 3.3.6.2/3.4.2.3
+//  --广点通 = 4.12.3
+//  --京东 = 1.1.6
+//  --快手 = 3.3.6
+//  --Sigmob = 2.24.0
+//  --Mintegral = 6.7.6
 //  请尽量使用上述版本，其他版本未经过测试
 
 /// 获取SDK版本
@@ -153,7 +155,15 @@ mgr.showDebugLog = YES;
 /// 此方法如果设置为YES则将会在聚合SDK最后一个可控Controller时自动查找传入控制器的栈顶控制器，以避免广告无法正常弹出的问题。
 @property (nonatomic, assign, getter=isAdShowCompatibilityMode) BOOL adShowCompatibilityMode;
 
-@property (nonatomic, strong, readonly, nullable) UIView *bottomView;
+/// 自定义底部View，可以在此View中设置应用Logo
+/// 在开屏页面底部设置应用自身的Logo页面或是自定义View
+/// 详解：[可选]发起拉取广告请求,并将获取的广告以半屏形式展示在传入的Window的上半部，剩余部分展示传入的bottomView
+/// 请注意
+///     1.bottomView需设置高，所占的空间不能过大，并保证高度不超过屏幕高度的 25%。必须设置height，如果height=0，将使用默认值200
+///     2.Splash广告只支持竖屏
+///     3.除广点通外，其余开屏均支持了safeArea
+@property (nonatomic, strong, nullable) UIView *bottomView;
+
 /// 背景色//默认为白色
 @property (nonatomic, strong) UIColor *backgroundColor;
 /// 代理对象
@@ -163,31 +173,25 @@ mgr.showDebugLog = YES;
 /// @param placeId 广告位置id
 - (instancetype)initWithPlaceId:(NSString *)placeId;
 
-/// 同下
+/// 请求并展示开屏
+/// @param controller 当前最顶部的控制器，用于弹出落地页
 - (void)loadAdAndShowWithController:(UIViewController *)controller;
 
-/// 在开屏页面底部设置应用自身的Logo页面或是自定义View
-/// 详解：[可选]发起拉取广告请求,并将获取的广告以半屏形式展示在传入的Window的上半部，剩余部分展示传入的bottomView
-/// 请注意
-///     1.bottomView需设置高，所占的空间不能过大，并保证高度不超过屏幕高度的 25%。必须设置height，如果height=0，将使用默认值200
-///     2.Splash广告只支持竖屏
-///     3.除广点通外，其余开屏均支持了safeArea
-/// @param controller 广告被点击时push内容的控制器
-/// @param bottomView 自定义底部View，可以在此View中设置应用Logo
-- (void)loadAdAndShowWithController:(UIViewController *)controller bottomView:(UIView *_Nullable)bottomView;
 ```
 
 #### 创建DNSplashAd接口实例
 ```
 DNSplashAd.hiddenStatusBar = isHiddenStatusBar;
 DNSplashAd *splash = [DNSplashAd.alloc initWithPlaceId:placeID];
+
+/// 在frame中设置好bottomView的高就可以使用自定义高度，否则将使用默认100
+splash.bottomView = [UIView.alloc initWithFrame:(CGRect){CGPointZero, {UIScreen.mainScreen.bounds.size.width, 100.0}}];;
+
 splash.delegate = self;
 // splash.backgroundColor = UIColor.redColor;
 _splash = splash; //需要全局持有实例否则实例被销毁将无法正常展示广告
-CGRect frame = bottomView.frame;
-frame.size = (CGSize){UIScreen.mainScreen.bounds.size.width, 100.0}; /// 在frame中设置好bottomView的高就可以使用自定义高度，否则将使用默认100
-bottomView.frame = frame;
-[splash loadAdAndShowWithController:controller bottomView:bottomView];
+
+[splash loadAdAndShowWithController:controller];
 ```
 
 #### DNSplashAdDelegate回调说明
@@ -660,7 +664,7 @@ _rewardedVideo = rewardedVideo; //需要全局持有实例否则实例被销毁�
 ```
 
 
-## 扩展：各个供应商提供的个性回调(Beta 1.1)
+## 扩展：各个供应商提供的个性回调(Beta 1.2)
 > **在之前的开发过程中您可能已经介入过【广点通】【穿山甲】【百度】或更多聚合支持的AdSDK，因为聚合SDK统一了它们的共性，因此有些厂商的非共性代理回调就没有办法在聚合广告的代理中体现，没关系，有了`DNAdDelegateCallbackProtocol`就能完美解决这个问题**
 
 > **只要遵守了`DNAdDelegateCallbackProtocol`这个协议（现全部广告都支持此协议），就可以在开发过程中使用“adDelegateCallback”**
@@ -713,14 +717,16 @@ splashAdApplicationWillEnterBackground: | 广点通 | - | 当点击下载应用�
 splashAdWillPresentFullScreenModal: | 广点通 | - | 开屏广告点击以后即将弹出全屏广告页
 splashAdDidPresentFullScreenModal: | 广点通 | - | 开屏广告点击以后弹出全屏广告页
 splashAdWillDismissFullScreenModal: | 广点通 | - | 点击以后全屏广告页将要关闭
+splashAdDidDismissFullScreenModal: | 广点通 | - | 点击以后全屏广告页已经关闭
 splashAdLifeTime: | 广点通 | NSNumber包裹的NSUInteger | 开屏广告剩余时间回调
+splashAdDidCloseOtherController:interactionType: | 穿山甲 | NSNumber包裹的BUInteractionType | 当另一个控制器关闭时调用此方法。
 splashAdCountdownToZero: | 穿山甲 | - | 当开屏广告倒计时等于零时调用此方法
 splashDidReady:AndAdType:VideoDuration: | 百度 | NSDictionary参数集合 | 广告加载完成
-ksad_splashAdVideoDidSkipped: | 快手 | - | 视频闪屏广告跳过
+ksad_splashAdVideoDidStartPlay: | 快手 | - | 视频闪屏广告开始播放
 splashADLoadSuccess: | Mintegral | - | 加载广告成功时调用。
-splashADShowSuccess: | Mintegral | - | 成功显示广告时调用。
 splashADDidLeaveApplication: | Mintegral | - | 当应用程序因tap事件即将离开时调用。调用此方法后不久，应用程序将被移到后台。
-splashAD:timeLeft: | Mintegral | NSNumber包裹的NSUInteger | 在剩余倒计时更新时调用。。
+splashAD:timeLeft: | Mintegral | NSNumber包裹的NSUInteger | 在剩余倒计时更新时调用。
+jadSplashRenderSuccess: | 京准通 | - | 当呈现一个splash广告成功时，将调用此方法。
 
 > **Interstitial插屏**
 
@@ -736,7 +742,9 @@ unifiedInterstitialAdViewWillPresentVideoVC | 广点通 | - | 插屏2.0视频广
 unifiedInterstitialAdViewDidPresentVideoVC: | 广点通 | - | 插屏2.0视频广告详情页 DidPresent 回调
 unifiedInterstitialAdViewWillDismissVideoVC: | 广点通 | - | 插屏2.0视频广告详情页 WillDismiss 回调
 unifiedInterstitialAdViewDidDismissVideoVC: | 广点通 | - | 插屏2.0视频广告详情页 DidDismiss 回调
+nativeExpresInterstitialAdWillClose: | 穿山甲 | - | 当InterstitialAd材料加载成功时调用的。
 nativeExpresInterstitialAdWillClose: | 穿山甲 | - | 当InterstitialAd即将关闭时调用此方法。
+jadInterstitialDidLoad: | 京准通 | - | 当成功加载插页广告材料时，调用此方法。
 
 > **Rewarded激励视频**
 
@@ -765,6 +773,8 @@ nativeExpressAdViewWillPresentVideoVC: | 广点通 | 同上 | 原生视频模板
 nativeExpressAdViewDidPresentVideoVC: | 广点通 | 同上 | 原生视频模板详情页 DidPresent 回调
 nativeExpressAdViewWillDismissVideoVC: | 广点通 | 同上 | 原生视频模板详情页 WillDismiss 回调
 nativeExpressAdViewDidDismissVideoVC: | 广点通 | 同上 | 原生视频模板详情页 DidDismiss 回调
+nativeExpressAdViewWillShow: | 穿山甲 | 同上 | 当广告视图即将显示模式内容时调用此方法。
+jadBannerWillVisible: | 京准通 | - | 当bannerAdView广告显示新广告时调用此方法。
 
 > **Feed自渲染信息流**
 
@@ -775,6 +785,15 @@ gdt_unifiedNativeAdView:playerStatusChanged:userInfo: | 广点通 | NSDictionary
 nativeAdDidLoad: | 快手 | DNFeedAdContentView对象 | 当本地广告材料成功加载时，将调用此方法
 nativeAd:didFailWithError: | 快手 | DNFeedAdContentView对象 | 当本机ad materiala加载失败时调用此方法
 
+> **Banner横幅**
+
+Key | 供应商 | 参数解释| 备注
+:-: | :-: | :-: | :-:
+unifiedBannerViewWillPresentFullScreenModal: | 广点通 | - | banner2.0广告点击以后即将弹出全屏广告页
+unifiedBannerViewWillDismissFullScreenModal: | 广点通 | - | 全屏广告页即将被关闭
+unifiedBannerViewWillLeaveApplication: | 广点通 | - | 当点击应用下载或者广告调用系统程序打开
+nativeExpressBannerAdViewWillBecomVisible: | 穿山甲 | - | 当bannerAdView广告槽显示新广告时调用此方法。
+adViewWillLeaveApplication: | Mintegral | - | 当应用程序即将因点击击而离开时调用。
 
 ## AVAudioSessionControl 内部实现
 
