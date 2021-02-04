@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)feedAdDidLoadSuccess:(DNFeedAd *)feedAd materialArray:(NSArray<DNAdMaterial *> *)materialArray;
 
 /**
-  自渲染广告加载数据失败回调
+ 自渲染广告加载数据失败回调
  @param error 错误对象
  */
 - (void)feedAdDidLoadFaild:(DNFeedAd *)feedAd error:(NSError *)error;
