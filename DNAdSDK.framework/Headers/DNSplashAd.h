@@ -52,11 +52,15 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /// 聚合开屏广告类。 提示: Splash广告只支持竖屏
+/// 开屏广告的windowLevel = UIWindowLevelStatusBar-1.0;
 @interface DNSplashAd : NSObject <DNAdDelegateCallbackProtocol>
 
 //************** 以下是类属性 **************//
 /// 是否在开屏时隐藏状态栏，默认是YES !!!!  
 @property (nonatomic, class, getter=isHiddenStatusBar) BOOL hiddenStatusBar;
+/// 实现该回调以禁用SDK内部对于UIApplication.sharedApplication.statusBarHidden的控制，
+/// 每当sdk想要控制隐藏状态栏的时候都会调用该回调。
+@property (nonatomic, class, nullable) void (^needHiddenStatusBarCallback)(BOOL isNeedHiddenStatusBar);
 //************** 类属性  end **************//
 
 @property (nonatomic, copy, readonly) NSString *placeId;
